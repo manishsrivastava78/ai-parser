@@ -19,11 +19,9 @@ import com.tcs.eas.api.tools.testbuddy.util.Helper;
 import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
-import io.swagger.models.RefResponse;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
 import io.swagger.parser.SwaggerParser;
 
 /**
@@ -143,6 +141,7 @@ public class Main implements Constant {
 						apiResponse.setResponseKey(response.getKey());
 						String resDesc = response.getValue().getDescription();
 						apiResponse.setResponseDescription(resDesc!=null ? resDesc : "");
+						apiResponse.setResponseContentType(ope.getProduces().get(0));
 						apiResponses.add(apiResponse);
 					}
 					

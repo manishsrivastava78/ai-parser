@@ -106,6 +106,11 @@ public interface Constant {
 	/**
 	 * 
 	 */
+	public static final String TEST_204_TITLE = "## TEST_204 Perform 204 No content Scenario";
+	
+	/**
+	 * 
+	 */
 	public static final String TEST_400_TITLE = "## TEST_400 Perform 400 Bad Request Scenario";
 
 	/**
@@ -117,6 +122,11 @@ public interface Constant {
 	 * 
 	 */
 	public static final String TEST_404_TITLE = "## TEST_404 Perform 404 Resource Not Found Scenario";
+	
+	/**
+	 * 
+	 */
+	public static final String TEST_405_TITLE = "## TEST_405 Perform 405 Method Not Allowed Scenario";
 	/**
 	 * 
 	 */
@@ -151,5 +161,46 @@ public interface Constant {
 	 * 
 	 */
 	public static final String API_HOST_PORT = "port";
+	
+	/**
+	 * 
+	 */
+	public static final String UPDATE_ME = "update-me";
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_200 = "200";
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_201 = "201";
+	
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_204 = "204";
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_400 = "400";
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_401 = "401";
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_404 = "404";
+	
+	/**
+	 * 
+	 */
+	public static final String RESPONSE_405 = "405";
 
 }

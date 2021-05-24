@@ -23,6 +23,11 @@ public class ApiResponse implements Serializable{
 	 * 
 	 */
 	private String responseDescription;
+	
+	/**
+	 * 
+	 */
+	private String responseContentType;
 
 	/**
 	 * @return the responseKey
@@ -50,6 +55,20 @@ public class ApiResponse implements Serializable{
 	 */
 	public void setResponseDescription(String responseDescription) {
 		this.responseDescription = responseDescription;
+	}
+
+	/**
+	 * @return the responseContentType
+	 */
+	public String getResponseContentType() {
+		return responseContentType;
+	}
+
+	/**
+	 * @param responseContentType the responseContentType to set
+	 */
+	public void setResponseContentType(String responseContentType) {
+		this.responseContentType = responseContentType;
 	}
 	
 	

@@ -1,14 +1,17 @@
 package com.tcs.eas.api.tools.testbuddy.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.tcs.eas.api.tools.testbuddy.constant.Constant;
 
 /**
  * 
  * @author 44745
  *
  */
-public class Resource implements Serializable{
+public class Resource implements Serializable,Constant{
 
 	/**
 	 * 
@@ -35,7 +38,84 @@ public class Resource implements Serializable{
 	 */
 	private List<ApiResponse> responses;
 	
+	/**
+	 * 
+	 */
+	private List<HttpHeader> headers ;
 	
+	/**
+	 * 
+	 */
+	private List<QueryParam> qParams ;
+	
+	/**
+	 * 
+	 */
+	private List<String> pathParams;
+	
+	/**
+	 * 
+	 */
+	private String body;
+	
+	
+	
+	/**
+	 * @return the qParams
+	 */
+	public List<QueryParam> getqParams() {
+		return qParams;
+	}
+
+	/**
+	 * @param qParams the qParams to set
+	 */
+	public void setqParams(List<QueryParam> qParams) {
+		this.qParams = qParams;
+	}
+
+	/**
+	 * @return the headers
+	 */
+	public List<HttpHeader> getHeaders() {
+		return headers;
+	}
+
+	/**
+	 * @param headers the headers to set
+	 */
+	public void setHeaders(List<HttpHeader> headers) {
+		this.headers = headers;
+	}
+
+	/**
+	 * @return the pathParams
+	 */
+	public List<String> getPathParams() {
+		return pathParams;
+	}
+
+	/**
+	 * @param pathParams the pathParams to set
+	 */
+	public void setPathParams(List<String> pathParams) {
+		this.pathParams = pathParams;
+	}
+
+	/**
+	 * @return the body
+	 */
+	public String getBody() {
+		return body;
+	}
+
+	/**
+	 * @param body the body to set
+	 */
+	public void setBody(String body) {
+		this.body = body;
+	}
+
 	/**
 	 * @return the responses
 	 */
@@ -109,5 +189,48 @@ public class Resource implements Serializable{
 	 */
 	public void setParameters(List<ResourceParameter> parameters) {
 		this.parameters = parameters;
+		setRequestData(parameters);
+	}
+	
+	/**
+	 * 
+	 * @param parameters
+	 */
+	private void setRequestData(List<ResourceParameter> parameters) {
+		List<HttpHeader> headers = new ArrayList<HttpHeader>();
+		List<QueryParam> queryParams = new ArrayList<QueryParam>();
+		List<String> pathParams = new ArrayList<String>();
+		
+		HttpHeader header = null;
+		QueryParam queryParam = null;
+		
+		for(ResourceParameter parameter : parameters) {
+			switch(parameter.getParameterType()) {
+			case HEADER_PARAMETER :
+				header = new HttpHeader();
+				header.setHeaderName(parameter.getName());
+				header.setHeaderValue(UPDATE_ME);
+				headers.add(header);
+				break;
+			case QUERY_PARAMETER :
+				queryParam = new QueryParam();
+				queryParam.setParameterName(parameter.getName());
+				queryParam.setParameterValue(UPDATE_ME);
+				queryParams.add(queryParam);
+				break;
+			case PATH_PARAMETER:
+				pathParams.add(parameter.getName());
+				break;
+			case BODY_PARAMETER :
+				setBody(UPDATE_ME);
+				break;
+			default:
+				break;
+			}
+		}
+		
+		setHeaders(headers);
+		setqParams(queryParams);
+		setPathParams(pathParams);
 	}
 }
