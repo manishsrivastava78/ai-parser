@@ -2,6 +2,7 @@ package com.tcs.eas.api.tools.testbuddy.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,9 +22,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.tcs.eas.api.tools.testbuddy.constant.Constant;
+import com.tcs.eas.api.tools.testbuddy.model.ApiError;
 import com.tcs.eas.api.tools.testbuddy.model.Attribute;
 import com.tcs.eas.api.tools.testbuddy.model.Definition;
 import com.tcs.eas.api.tools.testbuddy.model.ResourceParameter;
+import com.tcs.eas.api.tools.testbuddy.model.Server;
 
 import io.swagger.models.Model;
 import io.swagger.models.RefModel;
@@ -414,5 +418,129 @@ public class Helper implements Constant {
 
 	    // this will convert any number sequence into 6 character.
 	    return "msnk"+String.format("%06d", number);
+	}
+	
+	/**
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static Server getServer(String url) {
+		com.tcs.eas.api.tools.testbuddy.model.Server server = new Server();
+		if (url != null) {
+			try {
+				URL urlObj = new URL(url);
+				server.setHttpSchema(urlObj.getProtocol());
+				server.setHost(urlObj.getHost());
+				server.setPort(urlObj.getPort());
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		return server;
+	}
+	
+	/**
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public static ResourceParameter getResourceParameter(io.swagger.v3.oas.models.parameters.Parameter parameter) {
+		ResourceParameter resourceParameter = new ResourceParameter();
+		if (parameter instanceof io.swagger.v3.oas.models.parameters.QueryParameter) {
+			io.swagger.v3.oas.models.parameters.QueryParameter queryParameter = (io.swagger.v3.oas.models.parameters.QueryParameter) parameter;
+			resourceParameter.setParameterType(QUERY_PARAMETER);
+			resourceParameter.setAllowEmptyValue(queryParameter.getAllowEmptyValue());
+			resourceParameter.setDescription(queryParameter.getDescription());
+			resourceParameter.setFormat(queryParameter.getSchema().getFormat());
+			resourceParameter.setIn(queryParameter.getIn());
+			resourceParameter.setName(queryParameter.getName());
+			resourceParameter.setPattern(queryParameter.getSchema().getPattern());
+			resourceParameter.setRequired(queryParameter.getRequired());
+			resourceParameter.setType(queryParameter.getSchema().getType());
+			resourceParameter.setExample(queryParameter.getSchema().getExample()!= null ?queryParameter.getSchema().getExample().toString():null);
+			return resourceParameter;
+		}else if (parameter instanceof io.swagger.v3.oas.models.parameters.CookieParameter) {
+			io.swagger.v3.oas.models.parameters.CookieParameter cookieParameter = (io.swagger.v3.oas.models.parameters.CookieParameter) parameter;
+			resourceParameter.setParameterType(COOKIE_PARAMETER);
+			resourceParameter.setAllowEmptyValue(cookieParameter.getAllowEmptyValue());
+			resourceParameter.setCollectionFormat(cookieParameter.getSchema().getFormat());
+			resourceParameter.setDescription(cookieParameter.getDescription());
+			resourceParameter.setFormat(cookieParameter.getSchema().getFormat());
+			resourceParameter.setIn(cookieParameter.getIn());
+			resourceParameter.setName(cookieParameter.getName());
+			resourceParameter.setType(cookieParameter.getSchema().getType());
+			resourceParameter.setRequired(cookieParameter.getRequired());
+			resourceParameter.setPattern(cookieParameter.getSchema().getPattern());
+			resourceParameter.setExample(cookieParameter.getSchema().getExample()!=null? cookieParameter.getSchema().getExample().toString():null);
+			return resourceParameter;
+		}else if (parameter instanceof io.swagger.v3.oas.models.parameters.HeaderParameter) {
+			io.swagger.v3.oas.models.parameters.HeaderParameter headerParameter = (io.swagger.v3.oas.models.parameters.HeaderParameter) parameter;
+			resourceParameter.setParameterType(HEADER_PARAMETER);
+			resourceParameter.setAllowEmptyValue(headerParameter.getAllowEmptyValue());
+			resourceParameter.setDescription(headerParameter.getDescription());
+			resourceParameter.setFormat(headerParameter.getSchema().getFormat());
+			resourceParameter.setIn(headerParameter.getIn());
+			resourceParameter.setName(headerParameter.getName());
+			resourceParameter.setPattern(headerParameter.getSchema().getPattern());
+			resourceParameter.setRequired(headerParameter.getRequired());
+			resourceParameter.setType(headerParameter.getSchema().getType());
+			resourceParameter.setExample(headerParameter.getSchema().getExample()!=null ? headerParameter.getSchema().getExample().toString():null);
+			return resourceParameter;
+		}else if (parameter instanceof io.swagger.v3.oas.models.parameters.PathParameter) {
+			io.swagger.v3.oas.models.parameters.PathParameter pathParameter = (io.swagger.v3.oas.models.parameters.PathParameter) parameter;
+			resourceParameter.setParameterType(PATH_PARAMETER);
+			resourceParameter.setAllowEmptyValue(pathParameter.getAllowEmptyValue());
+			resourceParameter.setDescription(pathParameter.getDescription());
+			resourceParameter.setFormat(pathParameter.getSchema().getFormat());
+			resourceParameter.setIn(pathParameter.getIn());
+			resourceParameter.setName(pathParameter.getName());
+			resourceParameter.setPattern(pathParameter.getSchema().getPattern());
+			resourceParameter.setRequired(pathParameter.getRequired());
+			resourceParameter.setType(pathParameter.getSchema().getType());
+			resourceParameter.setExample(pathParameter.getSchema().getExample()!=null ? pathParameter.getSchema().getExample().toString():null);
+			return resourceParameter;
+		}
+		 else {
+			return null;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param errorFor
+	 * @return
+	 */
+	public static ApiError getApiError(String errorFor) {
+		ApiError apiError = null;
+		switch(errorFor.toUpperCase()) {
+			case ERROR_HOST:
+				apiError = new ApiError();
+				apiError.setErrorCode(MISSING_FIELD_CODE);
+				apiError.setErrorDescription(String.format(MISSING_FIELD_DESC, ERROR_HOST));
+				return apiError;
+			case ERROR_BASEPATH:
+				apiError = new ApiError();
+				apiError.setErrorCode(MISSING_FIELD_CODE);
+				apiError.setErrorDescription(String.format(MISSING_FIELD_DESC, ERROR_BASEPATH));
+				return apiError;
+			case ERROR_HTTP_SCHEME:
+				apiError = new ApiError();
+				apiError.setErrorCode(MISSING_FIELD_CODE);
+				apiError.setErrorDescription(String.format(MISSING_FIELD_DESC, ERROR_HTTP_SCHEME));
+				return apiError;
+			default:
+				return apiError;
+		}
+	}
+	
+
+	/**
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public static  String getFileExtension(String filePath) {
+		return FilenameUtils.getExtension(filePath);
 	}
 }

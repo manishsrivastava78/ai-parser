@@ -209,13 +209,13 @@ public class Resource implements Serializable,Constant{
 			case HEADER_PARAMETER :
 				header = new HttpHeader();
 				header.setHeaderName(parameter.getName());
-				header.setHeaderValue(UPDATE_ME);
+				header.setHeaderValue(parameter.getExample()==null ? UPDATE_ME : parameter.getExample());
 				headers.add(header);
 				break;
 			case QUERY_PARAMETER :
 				queryParam = new QueryParam();
 				queryParam.setParameterName(parameter.getName());
-				queryParam.setParameterValue(UPDATE_ME);
+				queryParam.setParameterValue(parameter.getExample()==null ? UPDATE_ME : parameter.getExample());
 				queryParams.add(queryParam);
 				break;
 			case PATH_PARAMETER:

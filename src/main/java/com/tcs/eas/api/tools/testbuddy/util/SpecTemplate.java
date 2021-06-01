@@ -87,7 +87,7 @@ public class SpecTemplate implements Constant {
 						filePath + File.separatorChar + "specs" + File.separatorChar + specFile + ".spec");
 				myWriter.write(setCliSpecificationHeading(resource));
 				myWriter.write("* request setup\n");
-				myWriter.write(generateSpecTemplate(resource,filePath));
+				myWriter.write(generateSpecTemplate(resource, filePath));
 				myWriter.close();
 				logger.info("Successfully wrote specification.");
 			} catch (IOException e) {
@@ -148,16 +148,19 @@ public class SpecTemplate implements Constant {
 		stringBuilder.append(TWO_NEW_LINE);
 		return stringBuilder.toString();
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	private String setCliSpecificationHeading(Resource resource) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("# " + ((resource.getOperationId() != null && resource.getOperationId().trim().length() > 0)
-				? resource.getOperationId()
-				: " TestBuddy Test Execution"+Helper.getRandomNumberString()));
+		stringBuilder.append(SPEC_TITLE);
+		stringBuilder.append(TEST_STEP_COMMENT);
+		stringBuilder
+				.append("# " + ((resource.getOperationId() != null && resource.getOperationId().trim().length() > 0)
+						? resource.getOperationId()
+						: " TestBuddy Test Execution" + Helper.getRandomNumberString()));
 		stringBuilder.append(TWO_NEW_LINE);
 		return stringBuilder.toString();
 	}
@@ -272,7 +275,7 @@ public class SpecTemplate implements Constant {
 		stringBuilder.append(TEST_404_TITLE);
 		stringBuilder.append(ONE_NEW_LINE);
 		stringBuilder
-				.append("* use path \"" + formData.getBasePath() + formData.getResourcePath() + "/testbuddy9876123\"");
+				.append("* use path \"" + formData.getBasePath() + formData.getResourcePath() + "/testbuddy9876123");
 		stringBuilder.append(ONE_NEW_LINE);
 		if (formData.getHttpHeaders() != null && formData.getHttpHeaders().size() > 0) {
 			stringBuilder.append(getHeaders(formData.getHttpHeaders()));
@@ -424,88 +427,154 @@ public class SpecTemplate implements Constant {
 		}
 		return stringBuilder.toString();
 	}
-	
+
 	/**
 	 * 
 	 * @param resource
 	 * @return
 	 */
-	private String generateSpecTemplate(Resource resource,String filePath) {
-		List<ApiResponse> apiResponses  = resource.getResponses();
+	private String generateSpecTemplate(Resource resource, String filePath) {
+		List<ApiResponse> apiResponses = resource.getResponses();
 		StringBuilder stringBuilder = new StringBuilder();
-		for(ApiResponse apiResponse : apiResponses) {
-			switch(apiResponse.getResponseKey()) {
+		for (ApiResponse apiResponse : apiResponses) {
+			switch (apiResponse.getResponseKey()) {
 			case RESPONSE_200:
-				stringBuilder.append(generateCliGetSpecTemplate_200(resource,apiResponse));
+				stringBuilder.append(generateCliGetSpecTemplate_200(resource, apiResponse));
 				break;
 			case RESPONSE_201:
-				stringBuilder.append(generateCliGetSpecTemplate_201(resource,filePath));
+				stringBuilder.append(generateCliGetSpecTemplate_201(resource, filePath, apiResponse));
 				break;
 			case RESPONSE_204:
-				stringBuilder.append(generateCliGetSpecTemplate_204(resource));
+				stringBuilder.append(generateCliGetSpecTemplate_204(resource, apiResponse));
 				break;
 			case RESPONSE_400:
-				stringBuilder.append(generateCliGetSpecTemplate_400(resource));
+				stringBuilder.append(generateCliGetSpecTemplate_400(resource, apiResponse));
 				break;
 			case RESPONSE_401:
-				stringBuilder.append(generateCliGetSpecTemplate_401(resource));
+				stringBuilder.append(generateCliGetSpecTemplate_401(resource, apiResponse));
 				break;
 			case RESPONSE_404:
-				stringBuilder.append(generateCliGetSpecTemplate_404(resource));
-				break;	
+				stringBuilder.append(generateCliGetSpecTemplate_404(resource, apiResponse));
+				break;
 			case RESPONSE_405:
-				stringBuilder.append(generateCliGetSpecTemplate_405(resource));
-				break;	
+				stringBuilder.append(generateCliGetSpecTemplate_405(resource, apiResponse));
+				break;
 			default:
 				break;
 			}
-			
+
 		}
-		
+
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @param apiResponse
+	 * @return
+	 */
+	private String generateCliGetSpecTemplate_200(Resource resource, ApiResponse apiResponse) {
+		StringBuilder stringBuilder = new StringBuilder();
+		if (spec.getApiInfo().getBasePath() != null) {
+			stringBuilder.append(getCommonSteps(TEST_200_TITLE, spec.getApiInfo().getBasePath() + resource.getPath(),
+					resource.getHeaders(), resource.getqParams(), resource.getMethod(), RESPONSE_200));
+		} else {
+			stringBuilder.append(getCommonSteps(TEST_200_TITLE, resource.getPath(), resource.getHeaders(),
+					resource.getqParams(), resource.getMethod(), RESPONSE_200));
+		}
+		stringBuilder.append("* The response content-type should be \"" + apiResponse.getResponseContentType() + "\"");
+		stringBuilder.append(ONE_NEW_LINE);
+		return stringBuilder.toString();
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @param apiResponse
+	 * @return
+	 */
+	private String generateCliGetSpecTemplate_204(Resource resource, ApiResponse apiResponse) {
+		if (spec.getApiInfo().getBasePath() != null) {
+			return getCommonSteps(TEST_204_TITLE, spec.getApiInfo().getBasePath() + resource.getPath(),
+					resource.getHeaders(), resource.getqParams(), resource.getMethod(), RESPONSE_204);
+		} else {
+			return getCommonSteps(TEST_204_TITLE, resource.getPath(), resource.getHeaders(), resource.getqParams(),
+					resource.getMethod(), RESPONSE_204);
+		}
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @param apiResponse
+	 * @return
+	 */
+	private String generateCliGetSpecTemplate_401(Resource resource, ApiResponse apiResponse) {
+		if (spec.getApiInfo().getBasePath() != null) {
+			return getCommonSteps(TEST_401_TITLE, spec.getApiInfo().getBasePath() + resource.getPath(), null,
+					resource.getqParams(), resource.getMethod(), RESPONSE_401);
+		} else {
+			return getCommonSteps(TEST_401_TITLE, resource.getPath(), null, resource.getqParams(), resource.getMethod(),
+					RESPONSE_401);
+		}
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @param apiResponse
+	 * @return
+	 */
+	private String generateCliGetSpecTemplate_404(Resource resource, ApiResponse apiResponse) {
+		if (spec.getApiInfo().getBasePath() != null) {
+			return getCommonSteps(TEST_404_TITLE,
+					spec.getApiInfo().getBasePath() + resource.getPath() + "/testbuddy9876123", resource.getHeaders(),
+					resource.getqParams(), resource.getMethod(), RESPONSE_404);
+		} else {
+			return getCommonSteps(TEST_404_TITLE, resource.getPath() + "/testbuddy9876123", resource.getHeaders(),
+					resource.getqParams(), resource.getMethod(), RESPONSE_404);
+		}
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @param apiResponse
+	 * @return
+	 */
+	private String generateCliGetSpecTemplate_405(Resource resource, ApiResponse apiResponse) {
+		if (spec.getApiInfo().getBasePath() != null) {
+			return getCommonSteps(TEST_405_TITLE, spec.getApiInfo().getBasePath() + resource.getPath(),
+					resource.getHeaders(), resource.getqParams(), resource.getMethod(), RESPONSE_405);
+		} else {
+			return getCommonSteps(TEST_405_TITLE, resource.getPath(), resource.getHeaders(), resource.getqParams(),
+					resource.getMethod(), RESPONSE_405);
+		}
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	private String generateCliGetSpecTemplate_200(Resource resource,ApiResponse apiResponse) {
+	private String generateCliGetSpecTemplate_201(Resource resource, String filePath, ApiResponse apiResponse) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(TWO_NEW_LINE);
-		stringBuilder.append(TEST_200_TITLE);
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		if (resource.getHeaders() != null && resource.getHeaders().size() > 0) {
-			stringBuilder.append(getHeaders(resource.getHeaders()));
-		}
-		if (resource.getqParams()!= null && resource.getqParams().size() > 0) {
-			stringBuilder.append(getQueryParams(resource.getqParams()));
-		}
-		stringBuilder.append("* send \"" + resource.getMethod().toUpperCase() + "\" http request");
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* Then response status code is \"200\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* The response content-type should be \""+apiResponse.getResponseContentType()+"\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		return stringBuilder.toString();
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private String generateCliGetSpecTemplate_201(Resource resource,String filePath ) {
-		StringBuilder stringBuilder = new StringBuilder();
+		// stringBuilder.append(TWO_NEW_LINE);
+		// stringBuilder.append(TEST_STEP_COMMENT);
 		stringBuilder.append(TWO_NEW_LINE);
 		stringBuilder.append(TEST_201_TITLE);
 		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "\"");
+		if (spec.getApiInfo().getBasePath() != null) {
+			stringBuilder.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "\"");
+		} else {
+			stringBuilder.append("* use path \"" + resource.getPath() + "\"");
+		}
+
 		stringBuilder.append(ONE_NEW_LINE);
 		if (resource.getHeaders() != null && resource.getHeaders().size() > 0) {
 			stringBuilder.append(getHeaders(resource.getHeaders()));
 		}
-		if (resource.getqParams()!= null && resource.getqParams().size() > 0) {
+		if (resource.getqParams() != null && resource.getqParams().size() > 0) {
 			stringBuilder.append(getQueryParams(resource.getqParams()));
 		}
 		if (resource.getBody() != null && !resource.getBody().isEmpty()) {
@@ -517,9 +586,9 @@ public class SpecTemplate implements Constant {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			//stringBuilder.append("* use body from file \"data/data.txt\"");
-			//stringBuilder.append(ONE_NEW_LINE);
-		}else {
+			// stringBuilder.append("* use body from file \"data/data.txt\"");
+			// stringBuilder.append(ONE_NEW_LINE);
+		} else {
 			try {
 				FileWriter myWriter = new FileWriter(
 						filePath + File.separatorChar + "data" + File.separatorChar + "data.txt");
@@ -528,48 +597,28 @@ public class SpecTemplate implements Constant {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			//stringBuilder.append("* use body from file \"data/data.txt\"");
-			//stringBuilder.append(ONE_NEW_LINE);
+			// stringBuilder.append("* use body from file \"data/data.txt\"");
+			// stringBuilder.append(ONE_NEW_LINE);
 		}
 		stringBuilder.append("* use body from file \"data/data.txt\"");
 		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* send \"" + formData.getMethod().toUpperCase() + "\" http request");
+		stringBuilder.append("* send \"" + resource.getMethod().toUpperCase() + "\" http request");
 		stringBuilder.append(ONE_NEW_LINE);
 		stringBuilder.append("* Then response status code is \"201\"");
 		stringBuilder.append(ONE_NEW_LINE);
+		stringBuilder.append("* The response content-type should be \"" + apiResponse.getResponseContentType() + "\"");
+		stringBuilder.append(ONE_NEW_LINE);
 		return stringBuilder.toString();
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	private String generateCliGetSpecTemplate_204(Resource resource) {
+	private String generateCliGetSpecTemplate_400(Resource resource, ApiResponse apiResponse) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(TWO_NEW_LINE);
-		stringBuilder.append(TEST_204_TITLE);
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		if (resource.getHeaders() != null && resource.getHeaders().size() > 0) {
-			stringBuilder.append(getHeaders(resource.getHeaders()));
-		}
-		if (resource.getqParams()!= null && resource.getqParams().size() > 0) {
-			stringBuilder.append(getQueryParams(resource.getqParams()));
-		}
-		stringBuilder.append("* send \"" + resource.getMethod().toUpperCase() + "\" http request");
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* Then response status code is \"204\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		return stringBuilder.toString();
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private String generateCliGetSpecTemplate_400(Resource resource) {
-		StringBuilder stringBuilder = new StringBuilder();
+		// stringBuilder.append(TWO_NEW_LINE);
+		// stringBuilder.append(TEST_STEP_COMMENT);
 		stringBuilder.append(TWO_NEW_LINE);
 		stringBuilder.append(TEST_400_TITLE);
 		stringBuilder.append(ONE_NEW_LINE);
@@ -588,76 +637,41 @@ public class SpecTemplate implements Constant {
 		stringBuilder.append(ONE_NEW_LINE);
 		stringBuilder.append("* Then response status code is \"400\"");
 		stringBuilder.append(ONE_NEW_LINE);
-		return stringBuilder.toString();
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private String generateCliGetSpecTemplate_401(Resource resource) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(TWO_NEW_LINE);
-		stringBuilder.append(TEST_401_TITLE);
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		if ((resource.getqParams() != null && resource.getqParams().size() > 0)) {
-			stringBuilder.append(getQueryParams(resource.getqParams()));
-		}
-		stringBuilder.append("* send \"" + resource.getMethod().toUpperCase() + "\" http request");
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* Then response status code is \"401\"");
+		stringBuilder.append("* The response content-type should be \"" + apiResponse.getResponseContentType() + "\"");
 		stringBuilder.append(ONE_NEW_LINE);
 		return stringBuilder.toString();
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private String generateCliGetSpecTemplate_404(Resource resource) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(TWO_NEW_LINE);
-		stringBuilder.append(TEST_404_TITLE);
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder
-				.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "/testbuddy9876123\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		if (resource.getHeaders() != null && resource.getHeaders() .size() > 0) {
-			stringBuilder.append(getHeaders(resource.getHeaders() ));
-		}
-		if (resource.getqParams()!= null && resource.getqParams().size() > 0) {
-			stringBuilder.append(getQueryParams(resource.getqParams()));
-		}
-		stringBuilder.append("* send \"" + resource.getMethod().toUpperCase() + "\" http request");
-		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* Then response status code is \"404\"");
-		stringBuilder.append(ONE_NEW_LINE);
-		return stringBuilder.toString();
 
-	}
-	
 	/**
 	 * 
-	 * @return Need to discuss
+	 * @param title
+	 * @param resourcePath
+	 * @param headers
+	 * @param queryParams
+	 * @param method
+	 * @param responseCode
+	 * @param responseContentType
+	 * @return
 	 */
-	private String generateCliGetSpecTemplate_405(Resource resource) {
+	private String getCommonSteps(String title, String resourcePath, List<HttpHeader> headers,
+			List<QueryParam> queryParams, String method, String responseCode) {
 		StringBuilder stringBuilder = new StringBuilder();
+		// stringBuilder.append(TWO_NEW_LINE);
+		// stringBuilder.append(TEST_STEP_COMMENT);
 		stringBuilder.append(TWO_NEW_LINE);
-		stringBuilder.append(TEST_405_TITLE);
+		stringBuilder.append(title);
 		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* use path \"" + spec.getApiInfo().getBasePath() + resource.getPath() + "\"");
+		stringBuilder.append("* use path \"" + resourcePath + "\"");
 		stringBuilder.append(ONE_NEW_LINE);
-		if (resource.getHeaders() != null && resource.getHeaders().size() > 0) {
-			stringBuilder.append(getHeaders(resource.getHeaders()));
+		if (headers != null && headers.size() > 0) {
+			stringBuilder.append(getHeaders(headers));
 		}
-		if (resource.getqParams()!= null && resource.getqParams().size() > 0) {
-			stringBuilder.append(getQueryParams(resource.getqParams()));
+		if (queryParams != null && queryParams.size() > 0) {
+			stringBuilder.append(getQueryParams(queryParams));
 		}
-		stringBuilder.append("* send \"" + resource.getMethod().toUpperCase() + "\" http request");
+		stringBuilder.append("* send \"" + method.toUpperCase() + "\" http request");
 		stringBuilder.append(ONE_NEW_LINE);
-		stringBuilder.append("* Then response status code is \"405\"");
+		stringBuilder.append("* Then response status code is \"" + responseCode + "\"");
 		stringBuilder.append(ONE_NEW_LINE);
 		return stringBuilder.toString();
 	}

@@ -61,7 +61,10 @@ public class ApiResponse implements Serializable{
 	 * @return the responseContentType
 	 */
 	public String getResponseContentType() {
-		return responseContentType;
+		if(responseContentType!=null)
+			return responseContentType;
+		else
+			return "application/json";
 	}
 
 	/**

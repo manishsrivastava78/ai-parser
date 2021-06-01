@@ -44,7 +44,10 @@ public class ApiDetail implements Serializable{
 	 */
 	private List<ApiError> errors;
 	
-	
+	/**
+	 * 
+	 */
+	private int port;
 	
 	/**
 	 * @return the apiTitle
@@ -129,4 +132,20 @@ public class ApiDetail implements Serializable{
 	public void setResourceList(List<Resource> resourceList) {
 		this.resourceList = resourceList;
 	}
+
+	/**
+	 * @return the port
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * @param port the port to set
+	 */
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
+	
 }

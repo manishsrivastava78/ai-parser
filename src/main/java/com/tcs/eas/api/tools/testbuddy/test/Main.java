@@ -23,6 +23,7 @@ import com.tcs.eas.api.tools.testbuddy.model.HttpHeader;
 import com.tcs.eas.api.tools.testbuddy.model.QueryParam;
 import com.tcs.eas.api.tools.testbuddy.model.Resource;
 import com.tcs.eas.api.tools.testbuddy.model.Spec;
+import com.tcs.eas.api.tools.testbuddy.parser.ApiParser;
 import com.tcs.eas.api.tools.testbuddy.util.Helper;
 import com.tcs.eas.api.tools.testbuddy.util.SpecTemplate;
 
@@ -248,14 +249,15 @@ public class Main implements Constant {
 	}*/
 
 	public static void main(String[] args) {
-		if(args.length!=2) {
+		if(args.length!=3) {
 			System.out.println("Please run program with correct arguments...");
 			System.exit(-1);
 		}
-		String swaggerPath = "C:\\manish\\cma-works\\testbuddy\\pet2.json";///args[0];//"C:\\manish\\cma-works\\testbuddy\\pet2.json";
-		String destinationDir ="C:\\manish\\cma-works\\testbuddy\\24may"; //args[1];
-		com.tcs.eas.api.tools.testbuddy.parser.Main main = new com.tcs.eas.api.tools.testbuddy.parser.Main();
-		ApiDetail apiDetail = main.getApiDetail(swaggerPath);
+		String swaggerPath =  args[0]; //"C:\\manish\\cma-works\\testbuddy\\pet2.json";///args[0];//"C:\\manish\\cma-works\\testbuddy\\pet2.json";
+		String destinationDir = args[1];//"C:\\manish\\cma-works\\testbuddy\\24may"; //args[1];
+		String swaggerType = args[2];
+		ApiParser apiParser = new ApiParser();
+		ApiDetail apiDetail = apiParser.getApiDetail(swaggerPath,args[2]); //for testing set version 2
 		ApiInfo apiInfo = new ApiInfo();
 		apiInfo.setApiTitle(apiDetail.getApiTitle());
 		apiInfo.setBasePath(apiDetail.getBasePath());
@@ -279,8 +281,8 @@ public class Main implements Constant {
 		 * Parse swagger and get resource list
 		 */
 		String swaggerPath = "C:\\manish\\cma-works\\testbuddy\\pet2.json";
-		com.tcs.eas.api.tools.testbuddy.parser.Main main = new com.tcs.eas.api.tools.testbuddy.parser.Main();
-		ApiDetail apiDetail = main.getApiDetail(swaggerPath);
+		com.tcs.eas.api.tools.testbuddy.parser.ApiParser main = new com.tcs.eas.api.tools.testbuddy.parser.ApiParser();
+		ApiDetail apiDetail = main.getApiDetail(swaggerPath,"2");
 		ApiInfo apiInfo = new ApiInfo();
 		apiInfo.setApiTitle(apiDetail.getApiTitle());
 		apiInfo.setBasePath(apiDetail.getBasePath());

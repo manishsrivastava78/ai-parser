@@ -16,6 +16,9 @@ public class ResourceParameter implements Serializable {
 	 */
 	private static final long serialVersionUID = 1512624466122455294L;
 
+	/**
+	 * 
+	 */
 	private Boolean allowEmptyValue;
 	
 	
@@ -78,6 +81,10 @@ public class ResourceParameter implements Serializable {
 	 */
 	private String jsonSchema;
 	
+	/**
+	 * 
+	 */
+	private String example;
 	
 	/**
 	 * @return the jsonSchema
@@ -267,4 +274,20 @@ public class ResourceParameter implements Serializable {
 	public void setSchema(Model schema) {
 		this.schema = schema;
 	}
+
+	/**
+	 * @return the example
+	 */
+	public String getExample() {
+		return example;
+	}
+
+	/**
+	 * @param example the example to set
+	 */
+	public void setExample(String example) {
+		this.example = example;
+	}
+	
+	
 }
